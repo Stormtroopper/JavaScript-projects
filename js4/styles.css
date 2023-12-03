@@ -1,0 +1,164 @@
+@import "normalize.css";
+
+*,
+*:after,
+*:before {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+
+}
+
+section {
+    height: 20vh;
+}
+
+main {
+    width: 100%;
+}
+
+main>div {
+    height: 80vh;
+    display: grid;
+    place-items: center;
+    position: sticky;
+    top: 0;
+}
+
+h2 {
+    font-weight: 150;
+    font-size: clamp(2 rem, 4vw+1rem, 6rem);
+    background: linear-gradient(hsl(0 0% 50%), hsl(0 0% 20%));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    --webkit-animation: scale-down linear both;
+    animation: scale-down linear both;
+    animation-timeline: scroll();
+    animation-range: 0 50vh;
+}
+
+.main-content {
+    background: black;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    scale: 0.95;
+}
+
+@-webkit-keyframes scale-down {
+    to {
+        scale: 0.75;
+    }
+}
+
+@keyframes scale-down {
+    to {
+        scale: 0.75;
+    }
+}
+
+.main-content svg {
+    height: 100%;
+    position: absolute;
+    right: 0%;
+    top: 0;
+    overflow: visible !important;
+    z-index: -1;
+}
+
+.main-content svg path {
+    stroke-width: clamp(2rem, 2vw, 4rem);
+}
+
+@media only screen and (orientation: portrait) {
+    svg {
+        display: none;
+    }
+}
+
+.backers path {
+    stroke: hsl(0 0% 50%);
+}
+
+.fillers path {
+    stroke: hsl(0 100% 50% / 1);
+}
+
+.fillers path:nth-of-type(1) {
+    --len: 8620;
+    stroke: hsl(140 80% 60%);
+}
+
+.fillers path:nth-of-type(2) {
+    --len: 7200;
+    stroke: hsl(140 90% 60%);
+}
+
+.fillers path:nth-of-type(3) {
+    --len: 7952;
+    stroke: hsl(140 90% 50%);
+}
+
+.fillers path {
+    stroke-dasharray: var(--len);
+    stroke-dashoffset: var(--len);
+}
+
+@supports (animation-timeline: scroll()) {
+    .fillers path {
+        -webkit-animation: fill linear both;
+        animation: fill linear both;
+        animation-timeline: --content;
+        animation-range: entry-crossing -38% exit 12%;
+    }
+}
+
+@-webkit-keyframes fill {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes fill {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.main-content div {
+    display: grid;
+    align-content: center;
+    padding: 0 6rem;
+}
+
+div h2 {
+    font-size: clamp(2rem, 4vw + 1rem, 4rem);
+    font-weight: 120;
+    color: hsl(0 0% 90%);
+    width: 10ch;
+    white-space: nowrap;
+}
+
+div:nth-of-type(3),
+div:nth-of-type(4) {
+    justify-items: end;
+}
+
+a {
+    width: 56px;
+    display: inline-block;
+    aspect-ratio: 1;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 10;
+    border-radius: 50%;
+    background: hsl(0 0% 100%);
+    display: grid;
+    place-items: center;
+}
+
+a img {
+    width: 80%;
+}
