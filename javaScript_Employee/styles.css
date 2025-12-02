@@ -1,0 +1,218 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+/* Theme Variables */
+:root {
+    --primary: #3f51b5;
+    --primary-dark: #303f9f;
+    --btn: #e2e2e2;
+    --btn-hover: #fefcfc;
+    --bg-light: #f5f5f5;
+    --card-bg: #ffffff;
+    --border: #dcdcdc;
+    --modal-bg: rgba(0, 0, 0, 0.45);
+}
+
+body {
+    font-family: "Segoe UI", sans-serif;
+    padding: 0 10px;
+    background: var(--bg-light);
+    color: #333;
+}
+
+/* MAIN CONTAINER */
+#main {
+    max-width: 1200px;
+    margin: 20px auto;
+    background: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    padding-bottom: 20px;
+}
+
+/* HEADER */
+header.header {
+    background: var(--primary);
+    padding: 20px;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header.header h1 {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+header.header .create_employee {
+    background: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: 600;
+}
+
+header.header .create_employee:hover {
+    background: var(--btn-hover);
+    transform: scaleX(1.21);
+}
+
+/* EMPLOYEES WRAPPER (Sidebar + Content) */
+.employees {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* SIDEBAR - Employee Name List */
+.employees_name {
+    background: var(--card-bg);
+    border-right: 1px solid var(--border);
+    padding-right: 10px;
+}
+
+.employee_name_title {
+    display: block;
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 15px;
+    padding-left: 5px;
+}
+
+.employee_name_list div {
+    background: var(--bg-light);
+    padding: 12px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.employee_name_list div:hover {
+    background: var(--primary);
+    color: #fff;
+}
+
+/* RIGHT CONTENT PANEL */
+.employee_single {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+}
+
+.employee_single_title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.employee_single--heading {
+    font-weight: bolder;
+}
+
+.employee_single_info {
+    padding: 10px;
+    background: var(--bg-light);
+    border-radius: 10px;
+    min-height: 20%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+img {
+     width: 120px;
+    height: 120px;
+    border-radius: 50%; 
+    margin-left:40%;
+    border: 3px solid black;
+    padding-left: 0.12px;
+    object-fit:cover;
+}
+
+/* ADD EMPLOYEE FORM MODAL */
+.add_employee {
+    display: none;
+    /* Show via JS */
+    position: fixed;
+    inset: 0;
+    background: var(--modal-bg);
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.add_employee_create {
+    background: #fff;
+    padding: 25px;
+    width: 450px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    animation: fadeIn 0.3s ease;
+}
+
+.add_employee_create input[type="text"],
+.add_employee_create input[type="email"],
+.add_employee_create input[type="number"],
+.add_employee_create input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fafafa;
+}
+
+.addEmployee_create--submit {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.addEmployee_create--submit:hover {
+    background: var(--primary-dark);
+    transform: scaleX(0.82);
+}
+
+/* FADE-IN ANIMATION */
+@keyframes fadeIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .employees {
+        grid-template-columns: 1fr;
+    }
+
+    .employees_name {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 15px;
+    }
+}
