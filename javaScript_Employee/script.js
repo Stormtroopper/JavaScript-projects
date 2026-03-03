@@ -1,143 +1,102 @@
-let employees = [];   // GLOBAL so we can reuse it
-let selectedEmployeeId = null;
-let selectedEmployee = null;
+let employees = JSON.parse(localStorage.getItem("employees")) || [];
+let selectedId = null;
 
-function saveEmployees(list) {
-    localStorage.setItem("employees", JSON.stringify(list));
-}
+const saveEmployees = () =>
+  localStorage.setItem("employees", JSON.stringify(employees));
 
-function loadEmployees() {
-    const data = localStorage.getItem("employees");
-    return data ? JSON.parse(data) : null;
-}
+const fetchEmployees = async () => {
+  if (employees.length) return;
 
-const basic_info = async () => {
-
-    // Load saved data first
-    const saved = loadEmployees();
-
-    if (saved) {
-        employees = saved;
-    } else {
-        const data = await fetch("./data.json");
-        employees = await data.json();
-        saveEmployees(employees);
-    }
-
-    // DOM elements
-    const employeeList = document.querySelector(".employee_name_list");
-    const employeeInfo = document.querySelector(".employee_single_info");
-    const createEmployeeBtn = document.querySelector(".create_employee");
-    const addEmployeeModal = document.querySelector(".add_employee");
-    const addEmployeeForm = document.querySelector(".add_employee_create");
-    const dobInput = document.querySelector(".addEmployee_create--dob");
-
-    // DOB max = 18 yrs old
-    dobInput.max = `${new Date().getFullYear() - 18}-12-31`;
-
-    selectedEmployeeId = employees[0].id;
-    selectedEmployee = employees[0];
-
-    // ------------------------------------------------------
-    // RENDER LIST
-    // ------------------------------------------------------
-    const renderEmployees = () => {
-        employeeList.innerHTML = "";
-
-        employees.forEach(emp => {
-            const item = document.createElement("div");
-            item.classList.add("employees_name_item");
-
-            if (emp.id === selectedEmployeeId) {
-                item.classList.add("selected");
-                selectedEmployee = emp;
-            }
-
-            item.dataset.id = emp.id;
-            item.innerHTML = `
-                ${emp.firstName} ${emp.lastName}
-                <i class="employeeDelete">❌</i>
-            `;
-
-            employeeList.appendChild(item);
-        });
-    };
-
-    // ------------------------------------------------------
-    // RENDER SINGLE EMPLOYEE
-    // ------------------------------------------------------
-    const renderSingleEmployee = () => {
-        employeeInfo.innerHTML = `
-            <img src="${selectedEmployee.imageUrl}"/>
-            <span class="employees__single--heading">
-                ${selectedEmployee.firstName} ${selectedEmployee.lastName} (${selectedEmployee.age})
-            </span><br/>
-            <span>${selectedEmployee.address}</span>
-            <span>${selectedEmployee.email}</span><br/>
-            <span>Mobile - ${selectedEmployee.contactNumber}</span>
-            <span>DOB - ${selectedEmployee.dob}</span>
-        `;
-    };
-
-    // ------------------------------------------------------
-    // CLICK LIST TO SELECT EMPLOYEE
-    // ------------------------------------------------------
-    employeeList.addEventListener("click", e => {
-        const div = e.target.closest("div");
-        if (!div) return;
-
-        const id = parseInt(div.dataset.id);
-        selectedEmployeeId = id;
-        selectedEmployee = employees.find(emp => emp.id === id);
-
-        renderEmployees();
-        renderSingleEmployee();
-    });
-
-    // ------------------------------------------------------
-    // OPEN / CLOSE MODAL
-    // ------------------------------------------------------
-    createEmployeeBtn.addEventListener("click", () => {
-        addEmployeeModal.style.display = "flex";
-    });
-
-    addEmployeeModal.addEventListener("click", (e) => {
-        if (e.target.classList.contains("add_employee")) {
-            addEmployeeModal.style.display = "none";
-        }
-    });
-
-    // ------------------------------------------------------
-    // ADD EMPLOYEE
-    // ------------------------------------------------------
-    addEmployeeForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-
-        const formData = Object.fromEntries(new FormData(addEmployeeForm));
-
-        const emp = {
-            ...formData,
-            id: employees.length + 1,
-            age: new Date().getFullYear() - parseInt(formData.dob.slice(0, 4)),
-            imageUrl: formData.imageUrl || "https://cdn-icons-png.flaticon.com/512/0/93.png"
-        };
-
-        employees.push(emp);
-        saveEmployees(employees);
-
-        selectedEmployeeId = emp.id;
-        selectedEmployee = emp;
-
-        renderEmployees();
-        renderSingleEmployee();
-
-        addEmployeeForm.reset();
-        addEmployeeModal.style.display = "none";
-    });
-
-    // Initial render
-    renderEmployees();
-    renderSingleEmployee();
+  const res = await fetch("./data.json");
+  employees = await res.json();
+  saveEmployees();
 };
 
-basic_info();
+const init = async () => {
+  await fetchEmployees();
+
+  const listEl = document.querySelector(".employee_name_list");
+  const infoEl = document.querySelector(".employee_single_info");
+  const modal = document.querySelector(".add_employee");
+  const form = document.querySelector(".add_employee_create");
+  const createBtn = document.querySelector(".create_employee");
+  const dobInput = document.querySelector(".addEmployee_create--dob");
+
+  dobInput.max = `${new Date().getFullYear() - 18}-12-31`;
+
+  selectedId = employees[0]?.id;
+
+  const getSelected = () =>
+    employees.find(emp => emp.id === selectedId);
+
+  const render = () => {
+    // Render List
+    listEl.innerHTML = employees
+      .map(emp => `
+        <div class="employees_name_item ${emp.id === selectedId ? "selected" : ""}" 
+             data-id="${emp.id}">
+          ${emp.firstName} ${emp.lastName}
+        </div>
+      `)
+      .join("");
+
+    // Render Selected
+    const emp = getSelected();
+    if (!emp) return;
+
+    infoEl.innerHTML = `
+      <img src="${emp.imageUrl}" />
+      <h3>${emp.firstName} ${emp.lastName} (${emp.age})</h3>
+      <p>${emp.address}</p>
+      <p>${emp.email}</p>
+      <p>Mobile - ${emp.contactNumber}</p>
+      <p>DOB - ${emp.dob}</p>
+    `;
+  };
+
+  // Select employee
+  listEl.addEventListener("click", e => {
+    const item = e.target.closest("[data-id]");
+    if (!item) return;
+
+    selectedId = +item.dataset.id;
+    render();
+  });
+
+  // Open modal
+  createBtn.onclick = () => (modal.style.display = "flex");
+
+  // Close modal
+  modal.onclick = e => {
+    if (e.target === modal) modal.style.display = "none";
+  };
+
+  // Add employee
+  form.onsubmit = e => {
+    e.preventDefault();
+
+    const data = Object.fromEntries(new FormData(form));
+    const year = new Date().getFullYear();
+
+    const newEmp = {
+      ...data,
+      id: Date.now(),
+      age: year - parseInt(data.dob.slice(0, 4)),
+      imageUrl:
+        data.imageUrl ||
+        "https://cdn-icons-png.flaticon.com/512/0/93.png"
+    };
+
+    employees.push(newEmp);
+    saveEmployees();
+    selectedId = newEmp.id;
+
+    form.reset();
+    modal.style.display = "none";
+    render();
+  };
+
+  render();
+};
+
+init();
