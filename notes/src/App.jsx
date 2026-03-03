@@ -7,9 +7,6 @@ function App() {
     <>
     <div>
 
-      <h3 style={{
-        marginLeft: '40%',
-      }}>Welcome to Our Notes App</h3>
       <Notes />
     </div>
     </>
