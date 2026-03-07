@@ -13,8 +13,11 @@ interface ProfessionalInfoData {
 interface BillingInfoData{
     cardNumber:string,
     cardHolder:string,
-    expiryDate:string
+    expiryDate:string,
+    cvv:number
 }
+const getCurrDate=new Date();
+
 export const validatePersonalInfoData = (data: PersonalInfoData) => {
     const errors: Record<string, string> = {}
 
@@ -75,7 +78,7 @@ const errors: Record<string, string> = {}
     errors.cardHolder = "Cardholder name is required"
   }
 
-  if (!data.expiryDate || data.expiryDate.length < 4) {
+  if (!data.expiryDate || data.expiryDate.length < 4 || data.expiryDate<getCurrDate.toDateString()) {
     errors.expiryDate = "Invalid expiry date"
   }
 
@@ -83,4 +86,15 @@ const errors: Record<string, string> = {}
     success: Object.keys(errors).length === 0,
     errors
   }
+}
+export type validBillingInfo=typeof validatePersonalInfoData;
+export type validProfessionalInfoData=typeof validateProfessionalInfoData;
+export type validBillingInfoData=typeof validateBillingInfoData;
+export type stepFormData=validBillingInfo|validProfessionalInfoData|validProfessionalInfoData;
+export type allFormData=PersonalInfoData&ProfessionalInfoData
+&BillingInfoData;
+export interface Step{
+  id:string,
+  name:string,
+  icon:React.ComponentType<{className?:string}>;
 }

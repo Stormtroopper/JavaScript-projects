@@ -1,10 +1,12 @@
+import MultiStepForm from './components/MultiStepForm'
 import './App.css'
 
 function App() {
 
   return (
     <>
-    <h1>A multi step form</h1>
+    <h1>Multi Step Form</h1>
+    <MultiStepForm/>
     </>
   )
 }
